@@ -1,9 +1,10 @@
 import MainScene from './scripts/scenes/MainScene';
 import './styles/style.scss';
 import 'phaser';
+
 export const gameSize = {
   width: 800,
-  height: 500,
+  height: 600,
 };
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
@@ -18,7 +19,8 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
   physics: {
     default: 'matter',
     matter: {
-      debug: false,
+      debug: true,
+      'plugins.attractors': true,
     },
   },
   scene: [MainScene],

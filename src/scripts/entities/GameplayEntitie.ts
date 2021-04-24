@@ -28,6 +28,7 @@ export default abstract class GameplayEntitie {
     this.sprite = this.scene.matter.add.sprite(this.initialPosition.x, this.initialPosition.y, this.name, 0, {
       isSensor: this.isTrigger,
       isStatic: this.isTrigger,
+      label: 'cube',
     });
 
     // rebuild as a trigger if needed
@@ -39,6 +40,10 @@ export default abstract class GameplayEntitie {
       this.sprite.setSensor(true);
       this.sprite.setStatic(true);
     }
+  }
+
+  public remove() {
+    this.sprite.destroy();
   }
 
   onDestroy() {}

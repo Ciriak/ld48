@@ -47,11 +47,9 @@ export default class MainScene extends Phaser.Scene {
       frameHeight: 32,
     });
 
-    this.soundManager.preload();
-
     this.load.on('progress', (value: any) => {
       progress.clear();
-      progress.fillStyle(0xff00ff, 1);
+      progress.fillStyle(0x00bbff, 1);
       const barHeight = 25;
       progress.fillRect(0, gameSize.height / 2 - barHeight, gameSize.width * value, barHeight);
     });
@@ -61,7 +59,6 @@ export default class MainScene extends Phaser.Scene {
     });
   }
   create() {
-    this.soundManager.create();
     this.level = new Level(this);
     this.character = new Character(this);
     this.character.spawn();
@@ -104,7 +101,7 @@ export default class MainScene extends Phaser.Scene {
   }
   private handleDebugLevelKey() {
     if (Phaser.Input.Keyboard.JustDown(this.UKey)) {
-      this.soundManager.bgMusic.stop();
+      // this.soundManager.layer1.stop();
     }
   }
 }

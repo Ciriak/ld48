@@ -19,7 +19,7 @@ export default class Debugger {
 
     if (this.active) {
       this.debugText.setVisible(true);
-      this.scene.game.config.physics.matter.debug = true;
+      this.scene.game.config.physics.matter.debug = {};
     } else {
       this.debugText.setVisible(false);
       this.scene.game.config.physics.matter.debug = false;
@@ -42,12 +42,15 @@ export default class Debugger {
       'left: ' + cursors.left.isDown,
       'right: ' + cursors.right.isDown,
       'facing: ' + character.facing,
+      'direction: ' + character.direction,
       'jumpDirection: ' + character.jumpDirection,
       'jumpKey :' + character.jumpKey.isDown,
       'canJump: ' + character.canJump,
+      'currentRay: ' + character.currentRay,
+      'canShoot: ' + character.canShoot,
       'canMove: ' + character.canMove,
       'isInAir: ' + character.isInAir,
-      'animation: ' + character.entitie.anims.currentAnim.key,
+      // 'animation: ' + character.entitie.anims.currentAnim.key,
       'currentLevel: ' + this.scene.level.currentLevel,
     ]);
   }
