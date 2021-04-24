@@ -27,11 +27,6 @@ export default class MainScene extends Phaser.Scene {
   preload() {
     const progress = this.add.graphics();
 
-    this.load.spritesheet('entities', 'assets/graphics/entities.png', {
-      frameWidth: 16,
-      frameHeight: 16,
-    });
-
     this.load.spritesheet('tileset', 'assets/graphics/tileset.png', {
       frameWidth: 16,
       frameHeight: 16,
@@ -42,10 +37,17 @@ export default class MainScene extends Phaser.Scene {
       frameHeight: 16,
     });
 
+    this.load.spritesheet('spike', 'assets/graphics/entities/spike.png', {
+      frameWidth: 16,
+      frameHeight: 16,
+    });
+
     this.load.spritesheet('player', 'assets/graphics/entities/player.png', {
       frameWidth: 16,
       frameHeight: 32,
     });
+
+    this.load.image('roomBg', 'assets/graphics/room-bg.png');
 
     this.load.on('progress', (value: any) => {
       progress.clear();
@@ -103,5 +105,18 @@ export default class MainScene extends Phaser.Scene {
     if (Phaser.Input.Keyboard.JustDown(this.UKey)) {
       // this.soundManager.layer1.stop();
     }
+  }
+
+  public nextLevel() {
+    this.level.isChanging = true;
+    this.cameras.main.fade(1000, 255, 255, 255, true);
+    this.character.freeze();
+    this.character.removeAllBullets();
+    setTimeout(() => {
+      this.level.loadNextLevel();
+      this.character.spawn();
+      this.character.unFreeze();
+      this.cameras.main.fadeFrom(1000, 255, 255, 255, true);
+    }, 1500);
   }
 }

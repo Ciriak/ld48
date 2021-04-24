@@ -3,17 +3,8 @@
  * @param collision Tell wether or not the collision was with the player
  */
 export const isPlayerCollision = (collision: Phaser.Types.Physics.Matter.MatterCollisionData) => {
-  try {
-    if (collision.bodyA.gameObject.getData('isPlayer')) {
-      return true;
-    }
-    if (collision.bodyB.gameObject.getData('isPlayer')) {
-      return true;
-    }
-  } catch (error) {
-    // tslint:disable-next-line: no-console
-    console.warn(error);
-    return false;
+  if (collision.bodyB.gameObject?.data?.get('isPlayer') === true || collision.bodyA.gameObject?.data?.get('isPlayer') === true) {
+    return true;
   }
 
   return false;
@@ -46,7 +37,7 @@ export function shouldIgnoreMagnets(label: string) {
  * @returns
  */
 export function shouldStickMagnet(label: string) {
-  const ignore = ['player', 'bullet', 'cube'];
+  const ignore = ['player', 'bullet', 'cube', 'spike'];
 
   if (ignore.indexOf(label) > -1) {
     return false;

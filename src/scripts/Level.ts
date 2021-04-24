@@ -6,6 +6,7 @@ import mapData from '../assets/map.json';
 import { findIndex } from 'lodash';
 import Cube from './entities/Cube';
 import Exit from './entities/Exit';
+import Spike from './entities/Spike';
 
 export default class Level {
   public currentLevel: number;
@@ -13,6 +14,7 @@ export default class Level {
   private scene: MainScene;
   private entities: GameplayEntitie[];
   private tiles: Phaser.Physics.Matter.Sprite[];
+  private bgTexture: Phaser.GameObjects.TileSprite;
   public isChanging: boolean;
 
   public bounds: {
@@ -47,17 +49,30 @@ export default class Level {
     this.bounds = {
       x: 0,
       y: 0,
-      width: mapData.levels[levelIndex].pxWid,
-      height: mapData.levels[levelIndex].pxHei,
+      width: level.pxWid,
+      height: level.pxHei,
     };
+    const trueSize = {
+      w: level.layerInstances[2].__cWid * level.layerInstances[0].__gridSize * 2 - level.layerInstances[0].__gridSize,
+      h: level.layerInstances[2].__cHei * level.layerInstances[0].__gridSize * 2 - level.layerInstances[0].__gridSize,
+    };
+
+    this.bgTexture = this.scene.add.tileSprite(0, 0, trueSize.w, trueSize.h, 'roomBg');
+    this.bgTexture.setDepth(-1);
 
     for (const layerData of level.layerInstances) {
       for (const tileData of layerData.gridTiles) {
         const sprite = this.scene.matter.add.sprite(tileData.px[0], tileData.px[1], 'tileset', tileData.t, {
           // add collisions if Tiles layer
-          isStatic: layerData.__identifier === 'Tiles',
+          isStatic: true,
           label: 'gridBlock',
         });
+
+        // remove the phydic properties
+        if (layerData.__identifier === 'Background') {
+          sprite.alpha = 0.7;
+          this.scene.matter.world.remove(sprite);
+        }
 
         this.tiles.push(sprite);
       }
@@ -98,23 +113,18 @@ export default class Level {
       sprite.destroy();
     }
 
+    this.bgTexture.destroy();
+    this.bgTexture = null;
+
     this.entities = [];
     this.tiles = [];
   }
 
   public loadNextLevel() {
-    this.isChanging = true;
-    this.scene.cameras.main.fade(1000, 255, 255, 255, true);
-    this.scene.character.freeze();
-    setTimeout(() => {
-      this.currentLevel++;
-      this.clean();
-      this.init();
-      this.scene.character.spawn();
-      this.scene.character.unFreeze();
-      this.scene.cameras.main.fadeFrom(1000, 255, 255, 255, true);
-      this.isChanging = false;
-    }, 1500);
+    this.currentLevel++;
+    this.clean();
+    this.init();
+    this.isChanging = false;
   }
 
   private handleEntities(entitieDef: any, entitiePos: { x: number; y: number }) {
@@ -128,6 +138,9 @@ export default class Level {
         break;
       case 'Cube':
         newEntitie = new Cube(this.scene);
+        break;
+      case 'Spike':
+        newEntitie = new Spike(this.scene);
         break;
 
       default:

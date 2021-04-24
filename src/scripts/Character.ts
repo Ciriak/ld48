@@ -18,7 +18,8 @@ export default class Character {
   public sensor: MatterJS.BodyType;
   public ray: Phaser.GameObjects.Line;
   public canShoot: boolean;
-  private currentBullet: Bullet;
+  public gender: 'male' | 'female';
+  private bullets: Bullet[];
   public rayHelper: {
     a: MatterJS.BodyType;
     b: MatterJS.BodyType;
@@ -26,7 +27,6 @@ export default class Character {
   };
   public pointer: Phaser.Input.Pointer;
   public currentRay: 'none' | 'pull' | 'push';
-
   public acceleration: number;
   public maxVelocity: {
     x: number;
@@ -43,6 +43,7 @@ export default class Character {
     this.isDead = false;
     this.isSpawning = false;
     this.isActive = false;
+    this.bullets = [];
     this.maxVelocity = {
       x: 3,
       y: 3,
@@ -77,6 +78,9 @@ export default class Character {
     this.entitie.setFrictionAir(0.0005);
     this.entitie.setFixedRotation();
 
+    const genderIndex = Math.floor(Math.random() * 2) + 1;
+    this.gender = genderIndex === 2 ? 'male' : 'female';
+
     this.entitie.setData('isPlayer', true);
     this.inputsListener();
     this.scene.game.input.mouse.disableContextMenu();
@@ -93,6 +97,7 @@ export default class Character {
     });
 
     this.generateCamera();
+    this.generateAnimations();
   }
 
   public update() {
@@ -102,9 +107,6 @@ export default class Character {
     this.animationsManager();
     this.checkOutOfBounds();
     this.updateSensor();
-    if (this.currentRay !== 'none') {
-      // this.rayListener();
-    }
 
     this.isInAir = false;
     if (this.entitie.body.velocity.y < -0.1 || this.entitie.body.velocity.y > 0.1) {
@@ -118,16 +120,23 @@ export default class Character {
     }
   }
 
-  public freeze() {
-    this.entitie.setStatic(true);
-  }
+  public freeze() {}
 
-  public unFreeze() {
-    this.entitie.setStatic(false);
-  }
+  public unFreeze() {}
 
   private updateSensor() {
     this.sensor.position = this.entitie.body.position;
+  }
+
+  /**
+   * CClear all existing bullets to prevent a physical issue and some broken bones
+   */
+  public removeAllBullets() {
+    for (const bullet of this.bullets) {
+      if (bullet) {
+        bullet.destroy();
+      }
+    }
   }
 
   private shoot() {
@@ -135,7 +144,7 @@ export default class Character {
     //   this.currentBullet.destroy();
     // }
     const cursorPoints = this.scene.cameras.main.getWorldPoint(this.pointer.x, this.pointer.y);
-    this.currentBullet = new Bullet(this.scene, this, this.rayHelper.a.position, cursorPoints);
+    this.bullets.push(new Bullet(this.scene, this, this.rayHelper.a.position, cursorPoints));
     this.canShoot = false;
     setTimeout(() => {
       this.canShoot = true;
@@ -198,18 +207,18 @@ export default class Character {
       return;
     }
     if (this.entitie.body.velocity.y < -0.1) {
-      // this.entitie.anims.play('playerJump', true);
+      this.entitie.anims.play(`playerJump-${this.gender}`, true);
     } else {
-      if (this.entitie.body.velocity.x !== 0) {
-        // this.entitie.anims.play('playerWalk', true);
+      if (this.entitie.body.velocity.x > 0.1 || this.entitie.body.velocity.x < -0.1) {
+        this.entitie.anims.play(`playerWalk-${this.gender}`, true);
       } else {
-        // this.entitie.anims.play('playerIdle', true);
+        this.entitie.anims.play(`playerIdle-${this.gender}`, true);
       }
     }
   }
 
   private generateCamera() {
-    this.scene.cameras.main.zoom = 1.5;
+    this.scene.cameras.main.zoom = 3;
     this.scene.cameras.main.startFollow(this.entitie, true, 0.05, 0.05);
     this.scene.cameras.main.setBounds(0, 0, this.scene.level.bounds.width, this.scene.level.bounds.height);
   }
@@ -222,6 +231,8 @@ export default class Character {
     this.canMove = false;
     this.scene.deathCount++;
     const delay = 1000;
+
+    this.removeAllBullets();
 
     this.scene.cameras.main.fade(delay, 255, 0, 0, false);
     setTimeout(() => {
@@ -237,7 +248,7 @@ export default class Character {
     this.entitie.setPosition(coord.x, coord.y);
     this.entitie.setVelocity(0, 0);
     this.entitie.setIgnoreGravity(false);
-    this.entitie.anims.play('playerSpawn');
+    // this.entitie.anims.play('playerSpawn');
 
     setTimeout(() => {
       this.canMove = true;
@@ -247,12 +258,13 @@ export default class Character {
   }
 
   private mouseListener() {
+    const cursorPoints = this.scene.cameras.main.getWorldPoint(this.pointer.x, this.pointer.y);
     // looking direction
-    if (this.pointer.position.x > this.entitie.x && this.facing !== 'left') {
+    if (cursorPoints.x > this.entitie.x && this.facing !== 'left') {
       this.entitie.flipX = false;
       this.facing = 'left';
     }
-    if (this.pointer.position.x < this.entitie.x && this.facing !== 'right') {
+    if (cursorPoints.x < this.entitie.x && this.facing !== 'right') {
       this.entitie.flipX = true;
       // this.entitie.setScale(1, 1);
       this.facing = 'right';
@@ -350,5 +362,56 @@ export default class Character {
     this.canJump = true;
     this.canMove = true;
     this.entitie.setAwake();
+  }
+
+  private generateAnimations() {
+    this.scene.anims.create({
+      key: 'playerIdle-male',
+      frames: this.scene.anims.generateFrameNumbers('player', { start: 1, end: 2 }),
+      repeat: -1,
+      frameRate: 2,
+    });
+    this.scene.anims.create({
+      key: 'playerWalk-male',
+      frames: this.scene.anims.generateFrameNumbers('player', { start: 3, end: 6 }),
+      repeat: -1,
+      frameRate: 5,
+    });
+
+    this.scene.anims.create({
+      key: 'playerJump-male',
+      frames: this.scene.anims.generateFrameNumbers('player', { start: 7, end: 7 }),
+      repeat: -1,
+      frameRate: 1,
+    });
+
+    this.scene.anims.create({
+      key: 'playerIdle-female',
+      frames: this.scene.anims.generateFrameNumbers('player', { start: 9, end: 10 }),
+      repeat: -1,
+      frameRate: 2,
+    });
+    this.scene.anims.create({
+      key: 'playerWalk-female',
+      frames: this.scene.anims.generateFrameNumbers('player', { start: 11, end: 14 }),
+      repeat: -1,
+      frameRate: 5,
+    });
+
+    this.scene.anims.create({
+      key: 'playerJump-female',
+      frames: this.scene.anims.generateFrameNumbers('player', { start: 15, end: 15 }),
+      repeat: -1,
+      frameRate: 1,
+    });
+
+    // this.anims.create({
+    //   key: 'endPointIdle',
+    //   frames: this.anims.generateFrameNumbers('tileset', {
+    //     frames: [67, 68, 69, 68, 67, 68, 69, 68, 67, 68, 69, 68, 67, 68, 69, 68],
+    //   }),
+    //   repeat: -1,
+    //   frameRate: 3,
+    // });
   }
 }

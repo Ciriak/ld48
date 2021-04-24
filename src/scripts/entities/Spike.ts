@@ -2,8 +2,8 @@ import MainScene from '../scenes/MainScene';
 import { isPlayerCollision } from '../utils';
 import GameplayEntitie, { gameplayItemName } from './GameplayEntitie';
 
-export default class Exit extends GameplayEntitie {
-  name: gameplayItemName = 'exit';
+export default class Spike extends GameplayEntitie {
+  name: gameplayItemName = 'spike';
   isTrigger = true;
   constructor(scene: MainScene) {
     super(scene);
@@ -12,10 +12,13 @@ export default class Exit extends GameplayEntitie {
   public add(x: number, y: number) {
     this.initialPosition = { x, y };
 
-    this.sprite = this.scene.matter.add.sprite(this.initialPosition.x, this.initialPosition.y, this.name, 0, {
+    const maxFrameIndex = 2;
+    const frame = Math.floor(Math.random() * maxFrameIndex) + 0;
+
+    this.sprite = this.scene.matter.add.sprite(this.initialPosition.x, this.initialPosition.y, this.name, frame, {
       isSensor: this.isTrigger,
       isStatic: this.isTrigger,
-      label: 'exit',
+      label: 'spike',
     });
 
     this.sprite.setBody({
@@ -31,10 +34,7 @@ export default class Exit extends GameplayEntitie {
       // TODO refactor
       if (isPlayerCollision(collide)) {
         // stop if level already changing
-        if (this.scene.level.isChanging) {
-          return;
-        }
-        this.scene.nextLevel();
+        this.scene.character.kill();
       }
     });
   }
