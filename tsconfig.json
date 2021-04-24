@@ -1,0 +1,15 @@
+{
+  "files": ["src/app.ts"],
+  "typeRoots": ["./node_modules/phaser/types"],
+  "types": ["Phaser"],
+  "include": ["./src/**/*.ts"],
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "noImplicitAny": true,
+    "target": "es5",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "removeComments": true,
+    "sourceMap": true
+  }
+}

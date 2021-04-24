@@ -1,0 +1,55 @@
+{
+  "name": "ld48",
+  "version": "1.0.0",
+  "description": "Entry for the Ludum Dare 48",
+  "main": "app.js",
+  "scripts": {
+    "test": "npm run build",
+    "start": "npm run dev",
+    "dev": "webpack-dev-server",
+    "lint": "pretty-quick --staged",
+    "build": "webpack --mode=production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ciriak/phaser3-typescript-starter.git"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint",
+      "pre-push": "npm test"
+    }
+  },
+  "keywords": [
+    "phaser",
+    "game",
+    "typescript"
+  ],
+  "author": "Cyriaque DELAUNAY",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ciriak/phaser3-typescript-starter/issues"
+  },
+  "homepage": "https://github.com/Ciriak/phaser3-typescript-starter/#readme",
+  "devDependencies": {},
+  "dependencies": {
+    "@types/lodash": "^4.14.168",
+    "copy-webpack-plugin": "^6.2.0",
+    "css-loader": "^2.1.1",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.0",
+    "node-sass": "^4.14.1",
+    "phaser": "^3.24.1",
+    "prettier": "^2.1.2",
+    "pretty-quick": "^2.0.2",
+    "sass-loader": "^7.3.1",
+    "style-loader": "^0.23.1",
+    "ts-loader": "^5.4.5",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.9.7",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0",
+    "webpack-livereload-plugin": "^2.3.0"
+  }
+}
