@@ -43,12 +43,15 @@ body {
 @keyframes light {
   0% {
     color: #fff;
+    transform: scale(1);
   }
 
   50% {
     color: orange;
+    transform: scale(1.2);
   }
   100% {
     color: #fff;
+    transform: scale(1);
   }
 }
