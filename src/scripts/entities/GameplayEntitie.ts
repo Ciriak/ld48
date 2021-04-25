@@ -90,5 +90,22 @@ export default abstract class GameplayEntitie {
     this.sprite.destroy();
   }
 
+  public glitch() {
+    const glitchId = Math.floor(Math.random() * 9999) + 0;
+    const maxFrame = 35;
+    const start = Math.floor(Math.random() * maxFrame) + 0;
+    const end = Math.floor(Math.random() * maxFrame) + 0;
+    const framerate = Math.floor(Math.random() * 30) + 2;
+
+    this.scene.anims.create({
+      key: `ent-glitch-${glitchId}`,
+      frames: this.scene.anims.generateFrameNumbers('tileset', { start, end }),
+      repeat: -1,
+      frameRate: framerate,
+    });
+
+    this.sprite.anims.play(`ent-glitch-${glitchId}`);
+  }
+
   onDestroy() {}
 }

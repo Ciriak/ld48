@@ -26,6 +26,9 @@ export default class BouncePanel extends GameplayEntitie {
 
     this.sprite.setOnCollide((collide: Phaser.Types.Physics.Matter.MatterCollisionData) => {
       if (collide.bodyB.label === 'bullet') {
+        const soundIndex = Math.floor(Math.random() * 3) + 1;
+
+        this.scene.soundManager.sounds[`bounce${soundIndex}`].play();
         const maxFrameIndex = 6;
         const frame = Math.floor(Math.random() * maxFrameIndex) + 0;
         this.sprite.anims.play('bouncePanelHit');

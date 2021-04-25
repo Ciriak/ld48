@@ -51,6 +51,12 @@ export default class Level {
 
   private init() {
     const levelIndex = this.currentLevel;
+
+    if (levelIndex === 14) {
+      this.crash();
+      return;
+    }
+
     const level = mapData.levels[levelIndex];
     this.entities = [];
     this.tiles = [];
@@ -137,6 +143,22 @@ export default class Level {
 
     this.entities = [];
     this.tiles = [];
+  }
+
+  private crash() {
+    // this.scene.game.scene.pause(this.scene);
+    this.scene.soundManager.crash();
+    this.currentLevel = 2;
+    let i = 0;
+    while (i < 10) {
+      i++;
+      this.currentLevel = i;
+      this.init();
+    }
+
+    for (const entitie of this.entities) {
+      entitie.glitch();
+    }
   }
 
   public openExit() {

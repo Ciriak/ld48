@@ -56,6 +56,7 @@ export default class Exit extends GameplayEntitie {
         if (this.scene.level.isChanging) {
           return;
         }
+        this.scene.soundManager.sounds.changeLevel.play();
         this.scene.nextLevel();
       }
     });

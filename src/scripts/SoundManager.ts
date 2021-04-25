@@ -2,6 +2,7 @@ import MainScene from './scenes/MainScene';
 import { Howl } from 'howler';
 
 const mainVolume = 0.5;
+const effectsVolume = 0.3;
 const transitionDelay = 5000;
 const eventDelay = 1000;
 const soundCooldown = 200;
@@ -11,6 +12,7 @@ export default class SoundManager {
   public loaded: boolean;
   public loadedCount: number;
   private canPlayDoorSound: boolean = true;
+  private crashed: boolean = false;
   public sounds: {
     [key: string]: Howl;
   };
@@ -86,13 +88,91 @@ export default class SoundManager {
       }),
       open: new Howl({
         src: ['./assets/sounds/open.ogg'],
+        volume: effectsVolume,
+        onload: () => {
+          this.handleSoundLoaded();
+        },
+      }),
+      crash: new Howl({
+        src: ['./assets/sounds/leadCrash.ogg'],
+
+        onload: () => {
+          this.handleSoundLoaded();
+        },
+      }),
+      glitch: new Howl({
+        src: ['./assets/sounds/glitch.ogg'],
 
         onload: () => {
           this.handleSoundLoaded();
         },
       }),
       close: new Howl({
+        volume: effectsVolume,
         src: ['./assets/sounds/close.ogg'],
+        onload: () => {
+          this.handleSoundLoaded();
+        },
+      }),
+      door: new Howl({
+        volume: effectsVolume,
+        src: ['./assets/sounds/door.wav'],
+        onload: () => {
+          this.handleSoundLoaded();
+        },
+      }),
+      magnet: new Howl({
+        volume: 0.03,
+        src: ['./assets/sounds/magnet.wav'],
+        onload: () => {
+          this.handleSoundLoaded();
+        },
+      }),
+      jump: new Howl({
+        volume: effectsVolume,
+        src: ['./assets/sounds/jump.wav'],
+        onload: () => {
+          this.handleSoundLoaded();
+        },
+      }),
+      hurt: new Howl({
+        volume: effectsVolume,
+        src: ['./assets/sounds/hurt.wav'],
+        onload: () => {
+          this.handleSoundLoaded();
+        },
+      }),
+      shoot: new Howl({
+        volume: effectsVolume,
+        src: ['./assets/sounds/shoot.wav'],
+        onload: () => {
+          this.handleSoundLoaded();
+        },
+      }),
+      bounce1: new Howl({
+        volume: effectsVolume,
+        src: ['./assets/sounds/bounce1.wav'],
+        onload: () => {
+          this.handleSoundLoaded();
+        },
+      }),
+      bounce2: new Howl({
+        volume: effectsVolume,
+        src: ['./assets/sounds/bounce2.wav'],
+        onload: () => {
+          this.handleSoundLoaded();
+        },
+      }),
+      bounce3: new Howl({
+        volume: effectsVolume,
+        src: ['./assets/sounds/bounce3.wav'],
+        onload: () => {
+          this.handleSoundLoaded();
+        },
+      }),
+      changeLevel: new Howl({
+        volume: effectsVolume,
+        src: ['./assets/sounds/changeLevel.wav'],
         onload: () => {
           this.handleSoundLoaded();
         },
@@ -128,6 +208,7 @@ export default class SoundManager {
   public doorOpen() {
     if (this.canPlayDoorSound) {
       this.sounds.open.play();
+      this.sounds.door.play();
       this.canPlayDoorSound = false;
       setTimeout(() => {
         this.canPlayDoorSound = true;
@@ -137,11 +218,30 @@ export default class SoundManager {
   public doorClose() {
     if (this.canPlayDoorSound) {
       this.sounds.close.play();
+      this.sounds.door.play();
       this.canPlayDoorSound = false;
       setTimeout(() => {
         this.canPlayDoorSound = true;
       }, soundCooldown);
     }
+  }
+
+  public crash() {
+    // tslint:disable-next-line: forin
+    for (const soundName in this.sounds) {
+      const sound = this.sounds[soundName];
+      sound.volume(0);
+      sound.stop();
+    }
+    this.sounds.crash.volume(1);
+    this.sounds.crash.play();
+    this.sounds.glitch.volume(0.5);
+    this.sounds.glitch.play();
+    this.sounds.glitch.loop(true);
+    this.scene.character.canMove = false;
+    this.scene.character.canJump = false;
+    this.scene.character.canShoot = false;
+    this.crashed = true;
   }
 
   private hasSpike() {}
@@ -155,6 +255,10 @@ export default class SoundManager {
   }
 
   public setLevelMusic(params: { diffulty: number; spike?: boolean; button?: boolean; cube?: boolean }) {
+    if (this.crashed) {
+      return;
+    }
+
     if (params.diffulty < 6) {
       this.fadeIn(this.sounds.bass);
     } else {
@@ -175,10 +279,8 @@ export default class SoundManager {
       this.fadeIn(this.sounds.drum);
     }
 
-    if (params.cube) {
-      this.fadeIn(this.sounds.support);
-    } else {
-      this.fadeOut(this.sounds.support);
+    if (params.diffulty > 11) {
+      this.fadeIn(this.sounds.lead);
     }
 
     if (params.spike) {
@@ -187,6 +289,17 @@ export default class SoundManager {
     } else {
       this.fadeOut(this.sounds.support2);
       this.fadeIn(this.sounds.support);
+    }
+
+    // ending
+    if (params.diffulty === 13) {
+      this.fadeIn(this.sounds.lead);
+      this.fadeOut(this.sounds.lead2);
+      this.fadeOut(this.sounds.bass);
+      this.fadeOut(this.sounds.bass2);
+      this.fadeOut(this.sounds.support);
+      this.fadeOut(this.sounds.support2);
+      this.fadeOut(this.sounds.drum);
     }
   }
 }

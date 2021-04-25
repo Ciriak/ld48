@@ -5,6 +5,7 @@ import GameplayEntitie, { gameplayItemName } from './GameplayEntitie';
 export default class Button extends GameplayEntitie {
   name: gameplayItemName = 'button';
   isTrigger = true;
+  isActive: boolean = false;
   constructor(scene: MainScene) {
     super(scene);
   }
@@ -26,7 +27,7 @@ export default class Button extends GameplayEntitie {
     this.sprite.setSensor(true);
     this.sprite.setStatic(true);
 
-    this.sprite.setOnCollide((collide: Phaser.Types.Physics.Matter.MatterCollisionData) => {
+    this.sprite.setOnCollideActive((collide: Phaser.Types.Physics.Matter.MatterCollisionData) => {
       this.enable();
     });
 
@@ -36,6 +37,11 @@ export default class Button extends GameplayEntitie {
   }
 
   public enable() {
+    if (this.isActive) {
+      return;
+    }
+
+    this.isActive = true;
     this.sprite.setFrame(1);
 
     this.scene.soundManager.doorOpen();
@@ -43,6 +49,7 @@ export default class Button extends GameplayEntitie {
   }
 
   public disable() {
+    this.isActive = false;
     this.sprite.setFrame(0);
     this.scene.level.closeExit();
   }

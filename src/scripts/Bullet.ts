@@ -1,16 +1,17 @@
 import Character from './Character';
+import MainScene from './scenes/MainScene';
 import { shouldBounce, shouldIgnoreMagnets, shouldStickMagnet, velocityToTarget } from './utils';
 
 const speed = 5;
 
 export default class Bullet {
-  private scene: Phaser.Scene;
+  private scene: MainScene;
   private shooter: Character;
   private entitie: Phaser.Physics.Matter.Sprite;
   private magnet: MatterJS.BodyType;
   private hasCollided: boolean;
   private emmiter: Phaser.GameObjects.Particles.ParticleEmitter;
-  constructor(scene: Phaser.Scene, shooter: Character, origin: { x: number; y: number }, target: { x: number; y: number }) {
+  constructor(scene: MainScene, shooter: Character, origin: { x: number; y: number }, target: { x: number; y: number }) {
     this.scene = scene;
     this.shooter = shooter;
     this.hasCollided = false;
@@ -142,6 +143,8 @@ export default class Bullet {
     if (!shouldStickMagnet(collide.bodyA.label)) {
       return;
     }
+
+    this.scene.soundManager.sounds.magnet.play();
 
     this.magnet = this.scene.matter.add.circle(collisionPoint.x, collisionPoint.y, 5, {
       isStatic: true,

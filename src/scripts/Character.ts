@@ -107,6 +107,18 @@ export default class Character {
     this.generateAnimations();
   }
 
+  private leftDown() {
+    const a = this.scene.input.keyboard.addKey('A');
+    const q = this.scene.input.keyboard.addKey('Q');
+
+    return a.isDown || q.isDown;
+  }
+
+  private rightDown() {
+    const d = this.scene.input.keyboard.addKey('D');
+    return d.isDown;
+  }
+
   public update() {
     this.updateRayPosition();
     this.inputsListener();
@@ -158,6 +170,7 @@ export default class Character {
     const cursorPoints = this.scene.cameras.main.getWorldPoint(this.pointer.x, this.pointer.y);
     this.bullets.push(new Bullet(this.scene, this, this.rayHelper.a.position, cursorPoints));
     this.canShoot = false;
+    this.scene.soundManager.sounds.shoot.play();
     setTimeout(() => {
       this.canShoot = true;
     }, cooldown);
@@ -241,6 +254,7 @@ export default class Character {
     this.isDead = true;
     this.canMove = false;
     this.scene.deathCount++;
+    this.scene.soundManager.sounds.hurt.play();
     const delay = 1000;
 
     this.removeAllBullets();
@@ -331,7 +345,7 @@ export default class Character {
     let acceleration = this.acceleration;
     this.entitie.setIgnoreGravity(false);
 
-    if (this.cursors.left.isDown) {
+    if (this.leftDown()) {
       if (this.entitie.body.velocity.x < -0.1) {
         this.direction = 'left';
       }
@@ -347,7 +361,7 @@ export default class Character {
         // this.entitie.applyForce(forceVector);
         this.entitie.setVelocityX(-velocityToApply);
       }
-    } else if (this.cursors.right.isDown) {
+    } else if (this.rightDown()) {
       if (this.direction !== 'right' || this.isInAir) {
         acceleration = acceleration / 3;
       }
@@ -378,6 +392,7 @@ export default class Character {
     if (this.jumpKey.isDown && this.canJump) {
       this.jumpDirection = this.direction;
       this.entitie.setVelocityY(-4);
+      this.scene.soundManager.sounds.jump.play();
       this.canJump = false;
     }
   }
