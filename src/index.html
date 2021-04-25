@@ -3,13 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="./assets//graphics//icon.png" type="image/x-icon">
+    <link rel="shortcut icon" href="./assets//graphics/icon.png" type="image/x-icon">
     <title>ATOM</title>
   </head>
 
   <body>
     <script src="./game.js"></script>
-    <div id="game"></div>
+    <div class="content">
+      <div id="game"></div>
+    </div>
+
+    <div class="links">
+      <a class="main" href="https://ldjam.com/events/ludum-dare/48/atom" target="_blank">VOTE FOR THE GAME HERE</a>
+      <span class="separator"></span>
+      <a href="https://twitter.com/Ciriak_" target="_blank">Twitter</a>
+      <span class="separator"></span>
+      <a  href="https://cyriaque.net" target="_blank">cyriaque.net</a>
+    </div>
+
     <!-- <div id="ui">
       <div class="credits">
         <h1>A GAME BY</h1>
@@ -22,5 +33,16 @@
         </div>
       </div>
     </div> -->
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ESLN5NHEJ6"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-ESLN5NHEJ6');
+    </script>
+
   </body>
 </html>
