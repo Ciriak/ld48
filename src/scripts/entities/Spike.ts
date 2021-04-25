@@ -24,10 +24,11 @@ export default class Spike extends GameplayEntitie {
 
     this.sprite.setBody({
       type: 'circle',
-      radius: 3,
+      radius: 2,
     });
     this.sprite.setSensor(true);
     this.sprite.setStatic(true);
+    this.sprite.setOrigin(0, 0.1);
 
     this.sprite.setOnCollide((collide: Phaser.Types.Physics.Matter.MatterCollisionData) => {
       // if collided with the player

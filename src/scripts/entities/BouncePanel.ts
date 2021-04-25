@@ -21,6 +21,7 @@ export default class BouncePanel extends GameplayEntitie {
     this.sprite = this.scene.matter.add.sprite(this.initialPosition.x, this.initialPosition.y, this.name, 0, {
       isStatic: true,
       label: this.name,
+      isSensor: false,
     });
 
     this.sprite.setOnCollide((collide: Phaser.Types.Physics.Matter.MatterCollisionData) => {

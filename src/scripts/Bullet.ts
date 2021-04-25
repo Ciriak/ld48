@@ -47,7 +47,7 @@ export default class Bullet {
       restitution: 1,
       label: 'bullet',
       gravityScale: { x: 0, y: 0 },
-      isSensor: true,
+      isSensor: false,
       isStatic: false,
       circleRadius: 3,
     });
@@ -125,17 +125,18 @@ export default class Bullet {
     }
 
     // bullet keep moving if its a bouncable entitie (do not remove the bullet)
-    if (shouldBounce(collide.bodyA.label)) {
+    if (shouldBounce(collide.bodyA.label) || shouldBounce(collide.bodyB.label)) {
       return;
     }
 
     this.hasCollided = true;
     this.entitie.destroy();
+
     const col = collide as any;
     const collisionPoint = col.collision.axisBody.position;
 
     // ignore if non stickable entitie
-    if (!shouldStickMagnet(collide.bodyA.label) || !!shouldStickMagnet(collide.bodyB.label)) {
+    if (!shouldStickMagnet(collide.bodyA.label)) {
       return;
     }
 

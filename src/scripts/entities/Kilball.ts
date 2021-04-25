@@ -19,7 +19,7 @@ export default class KillBall extends GameplayEntitie {
 
     this.sprite.setBody({
       type: 'circle',
-      radius: 5,
+      radius: 3,
     });
 
     this.sprite.setOnCollide((collide: Phaser.Types.Physics.Matter.MatterCollisionData) => {

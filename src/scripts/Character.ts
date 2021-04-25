@@ -3,6 +3,7 @@ import Bullet from './Bullet';
 import MainScene from './scenes/MainScene';
 
 const cooldown = 500;
+const maxVelocity = 5;
 export default class Character {
   public canMove: boolean;
   private scene: MainScene;
@@ -112,6 +113,7 @@ export default class Character {
     this.mouseListener();
     this.animationsManager();
     this.checkOutOfBounds();
+    this.checkVelocity();
     this.updateSensor();
 
     this.isInAir = false;
@@ -284,6 +286,30 @@ export default class Character {
       // this.currentRay !== 'push'
 
       this.shoot();
+    }
+  }
+
+  private checkVelocity() {
+    if (this.entitie && this.entitie.body) {
+      if (this.entitie.body.velocity.x > maxVelocity) {
+        this.entitie.setVelocity(maxVelocity, this.entitie.body.velocity.y);
+        return;
+      }
+
+      if (this.entitie.body.velocity.x < -maxVelocity) {
+        this.entitie.setVelocity(-maxVelocity, this.entitie.body.velocity.y);
+        return;
+      }
+
+      if (this.entitie.body.velocity.y > maxVelocity) {
+        this.entitie.setVelocity(this.entitie.body.velocity.x, maxVelocity);
+        return;
+      }
+
+      if (this.entitie.body.velocity.y < -maxVelocity) {
+        this.entitie.setVelocity(this.entitie.body.velocity.y, -maxVelocity);
+        return;
+      }
     }
   }
 

@@ -4,6 +4,7 @@ export type gameplayItemName = string;
 
 // WHY ??????? WTF MATTER
 export const offset = 16;
+const maxVelocity = 5;
 
 export default abstract class GameplayEntitie {
   /**
@@ -20,14 +21,43 @@ export default abstract class GameplayEntitie {
   constructor(scene: MainScene, isTrigger?: boolean) {
     this.scene = scene;
     this.isTrigger = isTrigger;
-    setInterval(() => {
-      this.checkOutOfBounds();
-    }, 500);
+  }
+
+  /**
+   * Called each frame
+   */
+  update() {
+    this.checkOutOfBounds();
+    this.checkVelocity();
   }
 
   private checkOutOfBounds() {
     if (this.sprite && this.sprite.body && (this.sprite.body.position.x > 5000 || this.sprite.body.position.y > 2000)) {
       this.reset();
+    }
+  }
+
+  private checkVelocity() {
+    if (this.sprite && this.sprite.body) {
+      if (this.sprite.body.velocity.x > maxVelocity) {
+        this.sprite.setVelocity(maxVelocity, this.sprite.body.velocity.y);
+        return;
+      }
+
+      if (this.sprite.body.velocity.x < -maxVelocity) {
+        this.sprite.setVelocity(-maxVelocity, this.sprite.body.velocity.y);
+        return;
+      }
+
+      if (this.sprite.body.velocity.y > maxVelocity) {
+        this.sprite.setVelocity(this.sprite.body.velocity.x, maxVelocity);
+        return;
+      }
+
+      if (this.sprite.body.velocity.y < -maxVelocity) {
+        this.sprite.setVelocity(this.sprite.body.velocity.y, -maxVelocity);
+        return;
+      }
     }
   }
 

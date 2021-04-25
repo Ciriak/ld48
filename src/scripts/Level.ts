@@ -205,5 +205,9 @@ export default class Level {
 
   private handleExit(entitieDef: any) {}
 
-  public update() {}
+  public update() {
+    for (const entitie of this.entities) {
+      entitie.update();
+    }
+  }
 }
