@@ -77,6 +77,9 @@ export default class Bullet {
       this.handleCollide(collide);
     });
 
+    const body = this.entitie.body as any;
+    body.label = 'bullet';
+
     // particle emitter
     const particle = this.scene.add.particles('bulletParticle', 0);
     particle.setDepth(5);

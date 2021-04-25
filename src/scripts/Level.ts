@@ -10,7 +10,7 @@ import Spike from './entities/Spike';
 import KillBall from './entities/Kilball';
 import Button from './entities/Button';
 import BouncePanel from './entities/BouncePanel';
-const startLevel = 1;
+const startLevel = 5;
 
 export default class Level {
   public currentLevel: number;

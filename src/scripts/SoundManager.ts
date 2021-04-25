@@ -144,10 +144,7 @@ export default class SoundManager {
     }
   }
 
-  private hasSpike() {
-    this.sounds.support.fade(1.0, 0.2, transitionDelay);
-    this.sounds.support2.fade(0, 1, transitionDelay);
-  }
+  private hasSpike() {}
 
   private fadeOut(sound: Howl, duration: number = 5000) {
     sound.fade(sound.volume(), 0, duration);
@@ -157,17 +154,39 @@ export default class SoundManager {
     sound.fade(sound.volume(), mainVolume, duration);
   }
 
-  public setLevelMusic(params: { diffulty: number; spike?: boolean }) {
-    if (params.diffulty === 0) {
+  public setLevelMusic(params: { diffulty: number; spike?: boolean; button?: boolean; cube?: boolean }) {
+    if (params.diffulty < 6) {
       this.fadeIn(this.sounds.bass);
+    } else {
+      this.fadeOut(this.sounds.bass, 10000);
+      this.fadeIn(this.sounds.bass2, 10000);
     }
 
-    if (params.diffulty === 1) {
+    if (params.diffulty > 2) {
+      this.fadeIn(this.sounds.lead);
+    }
+
+    if (params.diffulty >= 6) {
+      this.fadeOut(this.sounds.lead);
+      this.fadeIn(this.sounds.lead2);
+    }
+
+    if (params.diffulty > 10) {
+      this.fadeIn(this.sounds.drum);
+    }
+
+    if (params.cube) {
       this.fadeIn(this.sounds.support);
+    } else {
+      this.fadeOut(this.sounds.support);
     }
 
-    if (params.diffulty === 2) {
-      this.hasSpike();
+    if (params.spike) {
+      this.fadeIn(this.sounds.support2);
+      this.fadeOut(this.sounds.support);
+    } else {
+      this.fadeOut(this.sounds.support2);
+      this.fadeIn(this.sounds.support);
     }
   }
 }
