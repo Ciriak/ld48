@@ -10,7 +10,7 @@ export const isPlayerCollision = (collision: Phaser.Types.Physics.Matter.MatterC
   return false;
 };
 
-export const velocityToTarget = (from: any, to: { x: number; y: number }, speed = 1) => {
+export const velocityToTarget = (from: { x: number; y: number }, to: { x: number; y: number }, speed = 1) => {
   const direction = Math.atan((to.x - from.x) / (to.y - from.y));
   const speed2 = to.y >= from.y ? speed : -speed;
 
@@ -43,4 +43,12 @@ export function shouldStickMagnet(label: string) {
     return false;
   }
   return true;
+}
+export function shouldBounce(label: string) {
+  const bounce = ['bouncePanel'];
+
+  if (bounce.indexOf(label) > -1) {
+    return true;
+  }
+  return false;
 }

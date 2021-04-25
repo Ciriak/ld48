@@ -7,6 +7,10 @@ import { findIndex } from 'lodash';
 import Cube from './entities/Cube';
 import Exit from './entities/Exit';
 import Spike from './entities/Spike';
+import KillBall from './entities/Kilball';
+import Button from './entities/Button';
+import BouncePanel from './entities/BouncePanel';
+const startLevel = 1;
 
 export default class Level {
   public currentLevel: number;
@@ -16,6 +20,9 @@ export default class Level {
   private tiles: Phaser.Physics.Matter.Sprite[];
   private bgTexture: Phaser.GameObjects.TileSprite;
   public isChanging: boolean;
+  public exitOpen: boolean;
+  public requireButton: boolean;
+  public exitEntities: Exit[];
 
   public bounds: {
     x: number;
@@ -34,9 +41,11 @@ export default class Level {
   };
 
   constructor(scene: MainScene) {
-    this.currentLevel = 0;
+    this.currentLevel = startLevel;
     this.scene = scene;
     this.isChanging = false;
+    this.exitOpen = false;
+    this.requireButton = false;
     this.init();
   }
 
@@ -45,6 +54,9 @@ export default class Level {
     const level = mapData.levels[levelIndex];
     this.entities = [];
     this.tiles = [];
+    this.exitEntities = [];
+    this.exitOpen = false;
+    this.requireButton = false;
 
     this.bounds = {
       x: 0,
@@ -52,6 +64,9 @@ export default class Level {
       width: level.pxWid,
       height: level.pxHei,
     };
+
+    this.scene.cameras.main.setBounds(0, 0, this.bounds.width, this.bounds.height);
+
     const trueSize = {
       w: level.layerInstances[2].__cWid * level.layerInstances[0].__gridSize * 2 - level.layerInstances[0].__gridSize,
       h: level.layerInstances[2].__cHei * level.layerInstances[0].__gridSize * 2 - level.layerInstances[0].__gridSize,
@@ -95,6 +110,10 @@ export default class Level {
         this.handleEntities(entitieDef, entitiePosition);
       }
     }
+
+    this.scene.soundManager.setLevelMusic({
+      diffulty: this.currentLevel,
+    });
   }
 
   // clear the map and reload it
@@ -120,6 +139,26 @@ export default class Level {
     this.tiles = [];
   }
 
+  public openExit() {
+    this.exitOpen = true;
+    for (const entitie of this.entities) {
+      if (entitie.name === 'exit') {
+        const exit = entitie as Exit;
+        exit.open();
+      }
+    }
+  }
+
+  public closeExit() {
+    this.exitOpen = false;
+    for (const entitie of this.entities) {
+      if (entitie.name === 'exit') {
+        const exit = entitie as Exit;
+        exit.close();
+      }
+    }
+  }
+
   public loadNextLevel() {
     this.currentLevel++;
     this.clean();
@@ -135,12 +174,23 @@ export default class Level {
         break;
       case 'Exit':
         newEntitie = new Exit(this.scene);
+        this.exitEntities.push(newEntitie as Exit);
         break;
       case 'Cube':
         newEntitie = new Cube(this.scene);
         break;
       case 'Spike':
         newEntitie = new Spike(this.scene);
+        break;
+      case 'Killball':
+        newEntitie = new KillBall(this.scene);
+        break;
+      case 'Button':
+        this.requireButton = true;
+        newEntitie = new Button(this.scene);
+        break;
+      case 'BouncePanel':
+        newEntitie = new BouncePanel(this.scene);
         break;
 
       default:

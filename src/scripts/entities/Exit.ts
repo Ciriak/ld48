@@ -22,8 +22,30 @@ export default class Exit extends GameplayEntitie {
       type: 'circle',
       radius: 5,
     });
+
+    this.close(true);
+
+    setTimeout(() => {
+      if (!this.scene.level.requireButton) {
+        this.open(true);
+      }
+    }, 100);
+
+    this.scene.anims.create({
+      key: 'exitOpen',
+      frames: this.scene.anims.generateFrameNumbers('exit', { start: 1, end: 2 }),
+      repeat: -1,
+      frameRate: 1,
+    });
+  }
+
+  public open(first?: boolean) {
     this.sprite.setSensor(true);
     this.sprite.setStatic(true);
+    this.sprite.anims.play('exitOpen');
+    if (!first) {
+      this.scene.soundManager.doorOpen();
+    }
 
     this.sprite.setOnCollide((collide: Phaser.Types.Physics.Matter.MatterCollisionData) => {
       // if collided with the player
@@ -36,6 +58,21 @@ export default class Exit extends GameplayEntitie {
         }
         this.scene.nextLevel();
       }
+    });
+  }
+
+  public close(first?: boolean) {
+    this.sprite.setSensor(false);
+    this.sprite.setStatic(true);
+    this.sprite.anims.stop();
+    this.sprite.setFrame(0);
+
+    if (!first) {
+      this.scene.soundManager.doorClose();
+    }
+
+    this.sprite.setOnCollide((collide: Phaser.Types.Physics.Matter.MatterCollisionData) => {
+      // return because cannot exit
     });
   }
 }

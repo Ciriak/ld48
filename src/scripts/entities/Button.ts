@@ -2,8 +2,8 @@ import MainScene from '../scenes/MainScene';
 import { isPlayerCollision } from '../utils';
 import GameplayEntitie, { gameplayItemName } from './GameplayEntitie';
 
-export default class Spike extends GameplayEntitie {
-  name: gameplayItemName = 'spike';
+export default class Button extends GameplayEntitie {
+  name: gameplayItemName = 'button';
   isTrigger = true;
   constructor(scene: MainScene) {
     super(scene);
@@ -12,31 +12,38 @@ export default class Spike extends GameplayEntitie {
   public add(x: number, y: number) {
     this.initialPosition = { x, y };
 
-    const maxFrameIndex = 2;
-    const frame = Math.floor(Math.random() * maxFrameIndex) + 0;
-
-    this.sprite = this.scene.matter.add.sprite(this.initialPosition.x, this.initialPosition.y, this.name, frame, {
+    this.sprite = this.scene.matter.add.sprite(this.initialPosition.x, this.initialPosition.y, this.name, 0, {
       isSensor: this.isTrigger,
       isStatic: this.isTrigger,
-      label: 'spike',
-      mass: 4,
+      label: 'button',
     });
 
     this.sprite.setBody({
       type: 'circle',
-      radius: 3,
+      radius: 5,
     });
+
     this.sprite.setSensor(true);
     this.sprite.setStatic(true);
 
     this.sprite.setOnCollide((collide: Phaser.Types.Physics.Matter.MatterCollisionData) => {
-      // if collided with the player
-      // kill me FFS
-      // TODO refactor
-      if (isPlayerCollision(collide)) {
-        // stop if level already changing
-        this.scene.character.kill();
-      }
+      this.enable();
     });
+
+    this.sprite.setOnCollideEnd(() => {
+      this.disable();
+    });
+  }
+
+  public enable() {
+    this.sprite.setFrame(1);
+
+    this.scene.soundManager.doorOpen();
+    this.scene.level.openExit();
+  }
+
+  public disable() {
+    this.sprite.setFrame(0);
+    this.scene.level.closeExit();
   }
 }

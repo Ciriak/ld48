@@ -3,8 +3,8 @@ import './styles/style.scss';
 import 'phaser';
 
 export const gameSize = {
-  width: window.innerWidth,
-  height: window.innerHeight,
+  width: 1280,
+  height: 720,
 };
 
 const gameConfig: Phaser.Types.Core.GameConfig = {

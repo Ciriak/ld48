@@ -1,6 +1,8 @@
 import 'phaser';
 import Bullet from './Bullet';
 import MainScene from './scenes/MainScene';
+
+const cooldown = 500;
 export default class Character {
   public canMove: boolean;
   private scene: MainScene;
@@ -64,19 +66,23 @@ export default class Character {
       label: 'player',
     });
 
-    this.sensor = this.scene.matter.add.circle(spawn.x, spawn.y, 10, {
-      isSensor: true,
-      isStatic: true,
-      label: 'player',
-    });
+    // this.sensor = this.scene.matter.add.circle(spawn.x, spawn.y, 10, {
+    //   isSensor: true,
+    //   isStatic: true,
+    //   label: 'player',
+    // });
 
     this.entitie.setBody({
-      width: 16,
-      height: 32,
+      width: 8,
+      height: 16,
     });
+
     this.entitie.setFriction(0.15);
     this.entitie.setFrictionAir(0.0005);
     this.entitie.setFixedRotation();
+    this.entitie.setOrigin(0.5, 0.7);
+    const body = this.entitie.body as any;
+    body.label = 'player';
 
     const genderIndex = Math.floor(Math.random() * 2) + 1;
     this.gender = genderIndex === 2 ? 'male' : 'female';
@@ -112,6 +118,10 @@ export default class Character {
     if (this.entitie.body.velocity.y < -0.1 || this.entitie.body.velocity.y > 0.1) {
       this.isInAir = true;
     }
+
+    for (const bullet of this.bullets) {
+      bullet.update();
+    }
   }
 
   private checkOutOfBounds() {
@@ -125,7 +135,7 @@ export default class Character {
   public unFreeze() {}
 
   private updateSensor() {
-    this.sensor.position = this.entitie.body.position;
+    // this.sensor.position = this.entitie.body.position;
   }
 
   /**
@@ -148,7 +158,7 @@ export default class Character {
     this.canShoot = false;
     setTimeout(() => {
       this.canShoot = true;
-    }, 1000);
+    }, cooldown);
   }
 
   private updateRayPosition() {
@@ -163,12 +173,12 @@ export default class Character {
     if (cursorPoints.x > this.entitie.x) {
       this.rayHelper.a.position = {
         x: this.entitie.x + this.entitie.width,
-        y: this.entitie.y,
+        y: this.entitie.y - 15,
       };
     } else {
       this.rayHelper.a.position = {
         x: this.entitie.x - this.entitie.width,
-        y: this.entitie.y,
+        y: this.entitie.y - 15,
       };
     }
 
@@ -220,7 +230,6 @@ export default class Character {
   private generateCamera() {
     this.scene.cameras.main.zoom = 3;
     this.scene.cameras.main.startFollow(this.entitie, true, 0.05, 0.05);
-    this.scene.cameras.main.setBounds(0, 0, this.scene.level.bounds.width, this.scene.level.bounds.height);
   }
 
   public kill() {

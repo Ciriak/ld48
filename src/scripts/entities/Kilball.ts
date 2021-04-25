@@ -2,8 +2,8 @@ import MainScene from '../scenes/MainScene';
 import { isPlayerCollision } from '../utils';
 import GameplayEntitie, { gameplayItemName } from './GameplayEntitie';
 
-export default class Spike extends GameplayEntitie {
-  name: gameplayItemName = 'spike';
+export default class KillBall extends GameplayEntitie {
+  name: gameplayItemName = 'killball';
   isTrigger = true;
   constructor(scene: MainScene) {
     super(scene);
@@ -12,22 +12,15 @@ export default class Spike extends GameplayEntitie {
   public add(x: number, y: number) {
     this.initialPosition = { x, y };
 
-    const maxFrameIndex = 2;
-    const frame = Math.floor(Math.random() * maxFrameIndex) + 0;
-
-    this.sprite = this.scene.matter.add.sprite(this.initialPosition.x, this.initialPosition.y, this.name, frame, {
-      isSensor: this.isTrigger,
-      isStatic: this.isTrigger,
-      label: 'spike',
-      mass: 4,
+    this.sprite = this.scene.matter.add.sprite(this.initialPosition.x, this.initialPosition.y, this.name, 0, {
+      label: 'killball',
+      mass: 10,
     });
 
     this.sprite.setBody({
       type: 'circle',
-      radius: 3,
+      radius: 5,
     });
-    this.sprite.setSensor(true);
-    this.sprite.setStatic(true);
 
     this.sprite.setOnCollide((collide: Phaser.Types.Physics.Matter.MatterCollisionData) => {
       // if collided with the player

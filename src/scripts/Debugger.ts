@@ -10,7 +10,7 @@ export default class Debugger {
 
   create() {
     this.active = false;
-    this.debugText = this.scene.add.text(10, 10, 'Debug', { font: '16px Courier' }).setScrollFactor(0);
+    this.debugText = this.scene.add.text(500, 500, 'Debug', { font: '5px Courier' }).setScrollFactor(0);
     this.debugText.setVisible(false);
   }
 
@@ -20,6 +20,7 @@ export default class Debugger {
     if (this.active) {
       this.debugText.setVisible(true);
       this.scene.game.config.physics.matter.debug = {};
+      this.debugText.setDepth(5);
     } else {
       this.debugText.setVisible(false);
       this.scene.game.config.physics.matter.debug = false;

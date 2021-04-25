@@ -37,7 +37,37 @@ export default class MainScene extends Phaser.Scene {
       frameHeight: 16,
     });
 
+    this.load.spritesheet('exit', 'assets/graphics/entities/exit.png', {
+      frameWidth: 16,
+      frameHeight: 16,
+    });
+
     this.load.spritesheet('spike', 'assets/graphics/entities/spike.png', {
+      frameWidth: 16,
+      frameHeight: 16,
+    });
+
+    this.load.spritesheet('killball', 'assets/graphics/entities/killball.png', {
+      frameWidth: 16,
+      frameHeight: 16,
+    });
+
+    this.load.spritesheet('button', 'assets/graphics/entities/button.png', {
+      frameWidth: 16,
+      frameHeight: 16,
+    });
+
+    this.load.spritesheet('bouncePanel', 'assets/graphics/entities/bouncePanel.png', {
+      frameWidth: 16,
+      frameHeight: 16,
+    });
+
+    this.load.spritesheet('bullet', 'assets/graphics/entities/bullet.png', {
+      frameWidth: 16,
+      frameHeight: 16,
+    });
+
+    this.load.spritesheet('bulletParticle', 'assets/graphics/entities/bulletParticle.png', {
       frameWidth: 16,
       frameHeight: 16,
     });

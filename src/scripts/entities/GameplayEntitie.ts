@@ -20,6 +20,20 @@ export default abstract class GameplayEntitie {
   constructor(scene: MainScene, isTrigger?: boolean) {
     this.scene = scene;
     this.isTrigger = isTrigger;
+    setInterval(() => {
+      this.checkOutOfBounds();
+    }, 500);
+  }
+
+  private checkOutOfBounds() {
+    if (this.sprite && this.sprite.body && (this.sprite.body.position.x > 5000 || this.sprite.body.position.y > 2000)) {
+      this.reset();
+    }
+  }
+
+  public reset() {
+    this.sprite.setVelocity(0, 0);
+    this.sprite.setPosition(this.initialPosition.x, this.initialPosition.y);
   }
 
   public add(x: number, y: number) {
@@ -28,7 +42,7 @@ export default abstract class GameplayEntitie {
     this.sprite = this.scene.matter.add.sprite(this.initialPosition.x, this.initialPosition.y, this.name, 0, {
       isSensor: this.isTrigger,
       isStatic: this.isTrigger,
-      label: 'cube',
+      label: this.name,
     });
 
     // rebuild as a trigger if needed
